@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+<style>
+#map {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+
+ /*zoom:0.5;*/
+}
+
+.row {
+	white-space: nowrap;
+}
+.col {
+	display: inline-block;
+	width:70px;
+	height:70px;
+/*	margin:1px 1px 0 0;
+	border:1px solid #ccc;
+*/	cursor:pointer;
+	background-image:url('images/tileset1.png');
+}
+</style>
+
+<script src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+<script>
+var lasttileUsed = 0;
+$(function() {
+
+	document.oncontextmenu = function() {return false;};
+	
+	$(document).on('contextmenu', '.col', function(e) {
+ 		e.preventDefault();
+ 		swaptile(this, false);
+	});
+
+	$(document).on('click', '.col', function() {
+		swaptile(this, true);
+	});
+});
+
+var mapw = maph = 0;
+var tilesets = 65;
+function swaptile(obj, leftclick)
+{
+	// rotate tile id
+	var tile = $(obj).data("tile");
+	$(obj).removeClass("t"+tile);
+	if (lasttileUsed==tile)
+	{
+		if (leftclick==true)
+			tile = (tile + 1) % tilesets;
+		else
+			tile = (tile - 1 + tilesets) % tilesets;
+	}
+	else
+		tile = lasttileUsed;
+	$(obj).data("tile", tile).addClass("t"+tile).text(tile);
+	console.log((-70*tile)+"px 0;");
+	$(obj).css("background-position", (-70*tile)+"px 0");
+	lasttileUsed = tile;
+	updateOutput();
+}
+
+function resizemap()
+{
+	var newW = parseInt($('#w').val());
+	var newH = parseInt($('#h').val());
+
+	if (newH>maph) //add rows
+	{
+		for(var i=maph; i<newH; i++)
+		{
+			$('#map').append($('<div class=row id=row'+i+'></div>'));
+		}
+	}
+	else // remove rows
+	{
+		for(var i=newH; i<maph; i++)
+		{
+			$('#row'+i).remove();
+		}
+	}
+	maph = newH;
+
+	for (var r=0; r<maph; r++)
+	{
+		var ccount = $('#row'+r).children().length;
+		if (newW>ccount) //add col
+		{
+			for(var i=ccount; i<newW; i++)
+			{
+				$('#row'+r).append($('<div class="col">'+0+'</div>').data("tile", 0));
+			}
+		}
+		else // remove rows
+		{
+			for(var i=newW; i<ccount; i++)
+			{
+				$('#row'+r+' :last-child').remove();
+			}
+		}
+	}
+	mapw = newW;
+
+	updateOutput();
+}
+
+function updateOutput()
+{
+	// generate json output
+	var str = '[\n';
+	$('.row').each(function(idx) {
+		str += '\t[';
+		$(this).children().each(function(idx2){
+			str += $(this).data("tile");
+			if (idx2 < mapw-1) str += ', ';
+		});
+		str += ']';
+		if (idx < maph-1) str += ',';
+		str += '\n';
+	});
+	str += ']';
+	$('#output').text(str);
+}
+
+function savemap()
+{
+	var bnw = window.open();
+	bnw.document.writeln('<pre>'+$('#output').text()+'</pre>');
+	bnw.document.writeln('<script>alert("Copy paste to your levelX.json");<'+'/script>');
+}
+
+
+function loadmap()
+{
+	if (!confirm('you will lose this map, sure?')) return;
+
+	var json = prompt("Paste json here:");
+	if (json==false || json==undefined || json=='') return;
+
+	$('#output').text(json);
+
+	json = json.replace(/\n\r/g, '');
+	rows = JSON.parse(json);
+
+	$('#map').empty();
+
+	// find the w and h
+	maph = rows.length;
+	mapw = rows[0].length;
+	for(var i=1; i<maph; i++)
+	{
+		if (mapw < rows[i].length) mapw = rows[i].length;
+	}
+	$('#w').val(mapw); $('#h').val(maph);
+	
+	// generate map
+	for(var i=0; i<maph; i++)
+	{
+		var newrow = $('<div class=row id=row'+i+'></div>');
+		$('#map').append(newrow);
+
+		var j=0;
+		for(; j<rows[i].length; j++) // restore from map
+		{
+			var tileIdx = rows[i][j];
+			$('#row'+i).append($('<div class="col">'+tileIdx+'</div>').data("tile", tileIdx).css("background-position", (-70*tileIdx)+"px 0"));
+		}
+		for(; j<mapw; j++) // fill up remainings
+		{
+			$('#row'+i).append($('<div class="col">'+0+'</div>').data("tile", 0));
+		}
+	}
+
+}
+</script>
+
+
+<body>
+<textarea style="display:none" id="output" rows=5 cols=50></textarea>
+Cols: <input id="w" value="10"> x Rows: <input id="h" value="10">
+<button onclick="resizemap()">Set</button>
+<button onclick="savemap()">Save</button>
+<button onclick="loadmap()">Load</button>
+
+<div id="map"></div>
+
+</body>
+</html>

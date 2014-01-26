@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+<head>
+<style>
+.statusBox {
+	position:absolute;
+	width:100%;
+	float:left;
+	font-weight:bold;
+	font-size:20px;
+	font-family:verdana;
+	color:#ffffff;
+	top: 0px;
+	left: 0px;
+	z-index: 9999;
+	display: none;
+}
+
+.boxes {
+	padding:20px;
+}
+
+.layout
+{
+  text-align: center;
+  width:100%;
+  height:100%;
+  position:absolute;
+  
+  background:url('images/LOADINGPAGE.png');
+	background-size:100% 100%;
+	background-repeat:no-repeat;
+}
+.preloader
+{
+  width: 1000px;
+  top:50%;
+  left:50%;
+  margin: -400px -500px;
+  position:absolute;
+  color:#ffffff;
+  font-weight:bold;
+  font-size:30px;
+}
+
+</style>
+</head>
+<body style="background-color: black;">
+<div class="statusBox" id="statusBox">
+	<div style="margin-left: auto;margin-right: auto;">
+		<div id="showTime" class="boxes" style="float:left;">Times : 00:00:00</div>
+		<div id="showLives" class="boxes" style="float:left;margin-left:100px;">0 life lost!</div>
+		<div id="showStage" class="boxes" style="float:left;margin-left:100px;">At Tutorials</div>
+	</div>
+</div>
+
+<div class="layout" id="preloader">
+	<div class="preloader">
+		
+	</div>
+</div>
+
+<script src='lib/quintus.js'></script>
+<script src='lib/quintus_sprites.js'></script>
+<script src='lib/quintus_scenes.js'></script>
+<script src='lib/quintus_input.js'></script>
+<script src='lib/quintus_anim.js'></script>
+<script src='lib/quintus_2d.js'></script>
+<script src='lib/quintus_touch.js'></script>
+<script src='lib/quintus_ui.js'></script>
+<script src='lib/quintus_tmx.js'></script>
+<script src='lib/quintus_audio.js'></script>
+<!-- <script src="quintus-all.min.js"></script> -->
+<script src="game.js"></script>
+</body>
+</html>
+
+<!-- <!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0"/>
+<title></title>
+<style> 
+  body { padding:0px; margin:0px; overflow:hidden; } 
+  
+#gamelives, #gamecoins, #gamelives2, #gamecoins2, #gamelives3, #gamecoins3 {
+    background-color: #DDAAAA;
+    padding: 10px;
+    position: absolute;
+}
+</style>
+</head>
+<body>
+
+<div class="gamecontainer" style="overflow:hidden;">
+	<canvas id='platformerfull' style="overflow:hidden;"></canvas>
+	<div id="gameui3"><span id="gamecoins3"></span><span id="gamelives3"></span></div>
+</div>
+
+<script src='lib/quintus.js'></script>
+<script src='lib/quintus_sprites.js'></script>
+<script src='lib/quintus_scenes.js'></script>
+<script src='lib/quintus_input.js'></script>
+<script src='lib/quintus_anim.js'></script>
+<script src='lib/quintus_2d.js'></script>
+<script src='lib/quintus_touch.js'></script>
+<script src='lib/quintus_ui.js'></script>
+<script src='lib/quintus_tmx.js'></script>
+<script src='lib/quintus_audio.js'></script>
+<script src='lib/jquery-2.1.0.min.js'></script>
+
+<script src='game.js'></script>
+
+<script>
+function launchFullscreen2(element) {
+  if(element.requestFullscreen) {
+	element.requestFullscreen();
+  } else if(element.mozRequestFullScreen) {
+	element.mozRequestFullScreen();
+  } else if(element.webkitRequestFullscreen) {
+	element.webkitRequestFullscreen();
+  } else if(element.msRequestFullscreen) {
+	element.msRequestFullscreen();
+  }
+}
+
+$( document ).ready(function() {
+
+	$( "#platformerfull" ).click(function() {
+		launchFullscreen2(document.documentElement);
+		//location.reload();
+	});
+	
+	$('#platformerfull').prop("width",$(window).width());
+	$('#platformerfull').prop("height",$(window).height() + 100);
+
+	startGameEngine();
+	
+	function sendKeys(){
+		var event = jQuery.Event('keypress');
+		event.which = 37; 
+		event.keyCode = 37; //keycode to trigger this for simulating enter
+		$(this).trigger(event); 
+	}
+	
+	function remoteMove(){
+		$.ajax({
+			url: "http://localhost/game/stanly/server/server.php?move=0",
+			beforeSend: function( xhr ) {
+			xhr.overrideMimeType( "text/plain; charset=x-user-defined" );
+			}
+			})
+			.done(function( data ) {
+			var obj = jQuery.parseJSON(data);
+
+			if(obj.move == "0"){
+				sendKeys();
+			}
+		});
+	}
+	
+	//setInterval(remoteMove,1000);
+});
+</script>
+
+</body>
+</html>
+ -->
